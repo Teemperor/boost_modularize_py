@@ -1,0 +1,13 @@
+{
+  'version': 0,
+  'ignore-non-existent-contents': false,
+  'roots': [
+    { 'name': '/usr/include/', 'type': 'directory',
+      'contents': [
+        { 'name': 'module.modulemap', 'type': 'file',
+          'external-contents': '/home/teemperor/boost_modules/boost.modulemap'
+        }
+      ]
+    }
+  ]
+}
