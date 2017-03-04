@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import sys
 
 class ClassModule:
     def __init__(self, start_header):
@@ -45,22 +46,26 @@ for i in range(0, len(modules)):
     modulemap = open("boost.modulemap", "w")
 
     for j in range(0, i + 1):
-        modulemap.write(modules[j].module_def())
+        if not j in ignored_modules:
+            modulemap.write(modules[j].module_def())
 
     main_file.write(modules[i].includes())
 
+    sys.stdout.write("[" + str(i) + "/" + str(len(modules)) + "] ")
+
     main_file.close()
     modulemap.close()
-
-    try:
-        output = subprocess.check_output(
-         "./run.sh 2>&1",
-         shell=True
-        )
-    except subprocess.CalledProcessError as e:
+    process = subprocess.Popen("./run.sh " + sys.argv[1],
+                shell=True, stdout=subprocess.PIPE)
+    output = str(process.communicate())
+    output = output.replace("\\\\", "\\")
+    output = output.replace("\\n", "\n")
+    #output = process.stdout.read()
+    errcode = process.returncode
+    if errcode == 0:
+        print("Accepting " + modules[i].name())
+    else:
         ignored_modules.append(i)
         print("Ignoring " + modules[i].name())
-        continue
-    print("Accepting " + modules[i].name())
 
 
